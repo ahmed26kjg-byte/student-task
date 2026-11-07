@@ -1,0 +1,83 @@
+<head>
+    <meta charset="UTF-8">
+    <title>نظام إدارة وتحليل نتائج الطلاب</title>
+</head>
+<body>
+    <h1>نظام إدارة وتحليل نتائج الطلاب</h1>
+    <script>
+        class Student {
+            constructor(id, name, grades, attendance) {
+                this.id = id;
+                this.name = name;
+                this.grades = grades; // مصفوفة درجات 3 مواد
+                this.attendance = attendance; // نسبة الحضور
+            }
+
+            // دالة حساب المتوسط باستخدام reduce
+            calculateAverage() {
+                const sum = this.grades.reduce((total, grade) => total + grade, 0);
+                return sum / this.grades.length;
+            }
+
+            // دالة التقدير باستخدام if/else
+            getGradeLetter() {
+                const avg = this.calculateAverage();
+                if (avg >= 90) return 'A';
+                if (avg >= 80) return 'B';
+                if (avg >= 70) return 'C';
+                if (avg >= 60) return 'D';
+                if (avg >= 50) return 'E';
+                return 'F';
+            }
+            getStatus() {
+                const avg = this.calculateAverage();
+                if (avg >= 50 && this.attendance >= 75) {
+                    return "ناجح";
+                } else {
+                    return "يحتاج مراجعة";
+                }
+            }
+        }
+
+        // 3. نظام تشغيل الجامعة (Objects Array)
+        const studentsList = [
+            new Student(1, "شهد احمد", [85, 90, 88], 80),
+            new Student(2, "احمد محمد ", [42, 45, 44], 85), // طالب متعثر (متوسط بين 40 و 49)
+            new Student(3, "سيليا احمد ", [70, 65, 75], 60), 
+            new Student(4, "شاهنده محمود", [46, 48, 43], 90)  // طالب متعثر (متوسط بين 40 و 49)
+        ];
+
+        console.log("=== تقرير الطلاب الرئيسي ===");
+        studentsList.forEach(student => {
+            console.log(`الاسم: ${student.name} | المتوسط: ${student.calculateAverage().toFixed(2)} | التقدير: ${student.getGradeLetter()} | النتيجة: ${student.getStatus()}`);
+        });
+
+      
+        // الاستخراج (filter): استخراج الطلاب الذين تتراوح متوسطاتهم بين 40 و 49
+        const strugglingStudents = studentsList.filter(student => {
+            const avg = student.calculateAverage();
+            return avg >= 40 && avg <= 49;
+        });
+
+        // المعالجة (map): إضافة 5 درجات رأفة
+        const upgradedGrades = strugglingStudents.map(student => {
+            return student.calculateAverage() + 5;
+        });
+
+        // التحليل (reduce): جمع المتوسطات الجديدة
+        const totalUpgraded = upgradedGrades.reduce((sum, grade) => sum + grade, 0);
+
+        // حساب المتوسط مع "درع الحماية" لتجنب القسمة على صفر
+        let upgradedAverage = 0;
+        if (strugglingStudents.length > 0) {
+            upgradedAverage = totalUpgraded / strugglingStudents.length;
+        }
+
+        // 5. المخرجات (Console Logging)
+        console.log("\n=== مصفوفة الطلاب المتعثرين (الرأفة) ===");
+        console.log(strugglingStudents);
+
+        console.log(`\nمتوسط درجات الطلاب المتعثرين بعد الرأفة: ${upgradedAverage.toFixed(2)}`);
+    </script>
+</body>
+</html>
